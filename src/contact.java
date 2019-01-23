@@ -31,6 +31,9 @@ public class contact {
         int track = 0;
         int count = 0;
         int number = 1;
+        System.out.println("------ | --------------- | -------------");
+        System.out.format("%-6s | %-15s | %-5s%n", "Index", "Contact Name", "Phone Number");
+        System.out.println("------ | --------------- | -------------");
         for (String contact : contacts) {
             if (track % 2 == 1) {
                 hold2 = contact;
@@ -40,7 +43,7 @@ public class contact {
                 count++;
             }
             if (count == 2) {
-                System.out.println(number + ".  " + hold1 + " | " + hold2);
+                System.out.format("%-6s | %-15s | %-5s%n", number, hold1, hold2);
                 count = 0;
                 number++;
             }
@@ -81,10 +84,32 @@ public class contact {
 //        List<HashMap> contactList = Files.readAllLines(Paths.get(directory, filename));
         List<String> contactList = Files.readAllLines(Paths.get(directory, filename));
         String contactName = input.getString("Please enter new contact name: ");
-        String contactNumber = input.getString("Please enter contact phone number: ");
 
+        for(String contact: contactList){
+            if(contactName.equals(contact)){
+                System.out.println("Contact already exists, do you want to overwrite?");
+                boolean confirm = input.yesNo();
+                if(confirm){
+                    int index = contactList.indexOf(contactName);
+                    contactList.remove(index);
+                    contactList.remove(index);
+                    break;
+                }else{
+                    addContacts();
+                }
+            }
+        }
+        String contactNumber = input.getString("Please enter contact phone number: ");
         contactList.add(contactName);
-        contactList.add(contactNumber);
+        String number = "";
+        if(contactNumber.length() == 7){
+            number = contactNumber.replaceFirst("(\\d{3})(\\d+)", "$1-$2");
+        }else if(contactNumber.length() == 10){
+            number = contactNumber.replaceFirst("(\\d{3})(\\d{3})(\\d+)", "$1-$2-$3");
+        }else{
+            number = contactNumber;
+        }
+            contactList.add(number);
         Files.write(contactsPath, contactList);
         menu();
     }
@@ -113,7 +138,7 @@ public class contact {
         Path contactsPath = Paths.get(directory, filename);
         List<String> contacts = Files.readAllLines(contactsPath);
         showContacts(false);
-        int userInput = input.getInt(1, (contacts.size() / 2), "Enter the number of the contact you want to delete: ");
+        int userInput = input.getInt(1, (contacts.size() / 2), "Enter the Index number of the contact you want to delete: ");
         if (userInput == 1){
             contacts.remove(userInput-1);
             contacts.remove(userInput-1);
