@@ -18,25 +18,14 @@ public class contact {
 
 
     public static void main(String[] args) throws IOException {
-//        menu();
-//        addContactsTest();
-        showContactsTest();
-    }
-
-
-
-    public static void showContacts() throws IOException {
-        Path contactsPath = Paths.get(directory, filename);
-        List<String> contacts = Files.readAllLines(contactsPath);
-        for (String contact : contacts) {
-            System.out.println(contact);
-        }
-        System.out.println("Press enter to go back to menu.");
-        input.waitForEnter();
         menu();
+//        addContacts();
+//        showContacts();
     }
 
-    public static void showContactsTest() throws IOException {
+
+
+    public static void showContacts(boolean menu) throws IOException {
         Path contactsPath = Paths.get(directory,testFilename);
         List<String> contacts = Files.readAllLines(contactsPath);
         String hold1 = "";
@@ -59,24 +48,27 @@ public class contact {
             track++;
 
         }
+        if (menu) {
+            menu();
+        }
     }
+
+//    public static void addContacts() throws IOException {
+//        Path contactsPath = Paths.get(directory, filename);
+//        if (Files.notExists(contactsPath)) {
+//            Files.createFile(contactsPath);
+//        }
+//
+//        List<String> contactList = Files.readAllLines(Paths.get(directory, filename));
+//
+//        String contact = input.getString("Please enter new contact: ");
+//
+//        contactList.add(contact);
+//
+//        Files.write(contactsPath, contactList);
+//    }
 
     public static void addContacts() throws IOException {
-        Path contactsPath = Paths.get(directory, filename);
-        if (Files.notExists(contactsPath)) {
-            Files.createFile(contactsPath);
-        }
-
-        List<String> contactList = Files.readAllLines(Paths.get(directory, filename));
-
-        String contact = input.getString("Please enter new contact: ");
-
-        contactList.add(contact);
-
-        Files.write(contactsPath, contactList);
-    }
-
-    public static void addContactsTest() throws IOException {
 
         Path contactsPath = Paths.get(directory, testFilename);
         if (Files.notExists(contactsPath)) {
@@ -93,6 +85,33 @@ public class contact {
         Files.write(contactsPath, contactList);
     }
 
+    public static void searchContacts() throws IOException {
+        String userInput = input.getString("Enter a name to view the phone number for a particular contact:");
+
+        Path contactsPath = Paths.get(directory,testFilename);
+        List<String> contacts = Files.readAllLines(contactsPath);
+        String hold1 = "";
+        String hold2 = "";
+        int count = 0;
+        for (String contact : contacts){
+            if (contact.toLowerCase().contains(userInput)){
+                hold1 = contact;
+                hold2 = contacts.get(count+1);
+                System.out.println(hold1+ " | "+hold2);
+            }count++;
+
+        }menu();
+    }
+
+    public static void deleteContact() throws IOException {
+        Path contactsPath = Paths.get(directory,testFilename);
+        List<String> contacts = Files.readAllLines(contactsPath);
+        showContacts(false);
+        int userInput = input.getInt(1, contacts.size()+1,"Enter the number of the contact you want to delete: ");
+
+    }
+
+
     public static void menu() {
         System.out.println("Welcome! What would you like to do?");
 
@@ -103,10 +122,26 @@ public class contact {
 
         if (userChoice == 1) {
             try {
-                showContacts();
+                showContacts(true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else if (userChoice == 2) {
+            try {
+                addContacts();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else if (userChoice == 3) {
+            try {
+                searchContacts();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else if (userChoice == 4) {
+
+        }else if (userChoice == 0) {
+            System.exit(0);
         }
     }
 }
