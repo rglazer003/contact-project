@@ -5,35 +5,32 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class contact {
+    private String name;
+    private String number;
     static Input input = new Input();
     static String directory = "src/data";
     static String filename = "contacts.txt";
-    static String testFilename = "testContacts.txt";
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         menu();
-//        addContacts();
-//        showContacts();
     }
 
 
     public static void showContacts(boolean menu) throws IOException {
         Path contactsPath = Paths.get(directory, filename);
         List<String> contacts = Files.readAllLines(contactsPath);
+        List<contact> contactList = new ArrayList<>();
         String hold1 = "";
         String hold2 = "";
         int track = 0;
         int count = 0;
         int number = 1;
-        System.out.println("------ | --------------- | -------------");
-        System.out.format("%-6s | %-15s | %-5s%n", "Index", "Contact Name", "Phone Number");
-        System.out.println("------ | --------------- | -------------");
         for (String contact : contacts) {
             if (track % 2 == 1) {
                 hold2 = contact;
@@ -43,12 +40,19 @@ public class contact {
                 count++;
             }
             if (count == 2) {
-                System.out.format("%-6s | %-15s | %-5s%n", number, hold1, hold2);
+                contact entry = new contact(hold1,hold2);
+                contactList.add(entry);
                 count = 0;
-                number++;
             }
             track++;
 
+        }
+        System.out.println("------ | --------------- | -------------");
+        System.out.format("%-6s | %-15s | %-5s%n", "Index", "Contact Name", "Phone Number");
+        System.out.println("------ | --------------- | -------------");
+        for (contact entry: contactList){
+            System.out.format("%-6s | %-15s | %-5s%n", number, entry.name, entry.number);
+            number++;
         }
         System.out.println();
 
@@ -59,20 +63,10 @@ public class contact {
         }
     }
 
-//    public static void addContacts() throws IOException {
-//        Path contactsPath = Paths.get(directory, filename);
-//        if (Files.notExists(contactsPath)) {
-//            Files.createFile(contactsPath);
-//        }
-//
-//        List<String> contactList = Files.readAllLines(Paths.get(directory, filename));
-//
-//        String contact = input.getString("Please enter new contact: ");
-//
-//        contactList.add(contact);
-//
-//        Files.write(contactsPath, contactList);
-//    }
+    public contact (String name, String number){
+        this.name = name;
+        this.number = number;
+    }
 
     public static void addContacts() throws IOException {
 
@@ -81,7 +75,6 @@ public class contact {
             Files.createFile(contactsPath);
         }
 
-//        List<HashMap> contactList = Files.readAllLines(Paths.get(directory, filename));
         List<String> contactList = Files.readAllLines(Paths.get(directory, filename));
         String contactName = input.getString("Please enter new contact name: ");
 
@@ -149,7 +142,6 @@ public class contact {
         }
         Files.write(contactsPath, contacts);
         menu();
-
 
     }
 
