@@ -12,6 +12,7 @@ import java.util.List;
 public class contact {
     private String name;
     private String number;
+    private String email;
     static Input input = new Input();
     static String directory = "src/data";
     static String filename = "contacts.txt";
@@ -28,30 +29,41 @@ public class contact {
         List<contact> contactList = new ArrayList<>();
         String hold1 = "";
         String hold2 = "";
-        int track = 0;
+        String hold3 = "";
+        int track = 1;
         int count = 0;
         int number = 1;
         for (String contact : contacts) {
-            if (track % 2 == 1) {
-                hold2 = contact;
-                count++;
-            } else {
+            if (track == 1) {
                 hold1 = contact;
                 count++;
-            }
-            if (count == 2) {
-                contact entry = new contact(hold1,hold2);
-                contactList.add(entry);
-                count = 0;
+            } else if (track == 2) {
+                hold2 = contact;
+                count++;
+            } else if (track == 3) {
+                hold3 = contact;
+                count++;
             }
             track++;
+            if (count == 3) {
+                contact entry = new contact(hold1, hold2, hold3);
+                contactList.add(entry);
+                count = 0;
+                track = 1;
+            }
 
         }
-        System.out.println("------ | --------------- | -------------");
-        System.out.format("%-6s | %-15s | %-5s%n", "Index", "Contact Name", "Phone Number");
-        System.out.println("------ | --------------- | -------------");
-        for (contact entry: contactList){
-            System.out.format("%-6s | %-15s | %-5s%n", number, entry.name, entry.number);
+        System.out.println("------ | --------------- | ------------ | --------------");
+        System.out.format("%-6s | %-15s | %-5s | %-40s%n", "Index", "Contact Name", "Phone Number", "Email Address");
+        System.out.println("------ | --------------- | ------------ | --------------");
+        String phoneNumber;
+        for (contact entry : contactList) {
+            if (entry.number.length() == 8) {
+                phoneNumber = entry.number + "    ";
+            } else {
+                phoneNumber = entry.number;
+            }
+            System.out.format("%-6s | %-15s | %-5s | %-40s%n", number, entry.name, phoneNumber, entry.email);
             number++;
         }
         System.out.println();
@@ -63,9 +75,10 @@ public class contact {
         }
     }
 
-    public contact (String name, String number){
+    public contact(String name, String number, String email) {
         this.name = name;
         this.number = number;
+        this.email = email;
     }
 
     public static void addContacts() throws IOException {
@@ -78,31 +91,34 @@ public class contact {
         List<String> contactList = Files.readAllLines(Paths.get(directory, filename));
         String contactName = input.getString("Please enter new contact name: ");
 
-        for(String contact: contactList){
-            if(contactName.equals(contact)){
+        for (String contact : contactList) {
+            if (contactName.equals(contact)) {
                 System.out.println("Contact already exists, do you want to overwrite?");
                 boolean confirm = input.yesNo();
-                if(confirm){
+                if (confirm) {
                     int index = contactList.indexOf(contactName);
                     contactList.remove(index);
                     contactList.remove(index);
                     break;
-                }else{
+                } else {
                     addContacts();
                 }
             }
         }
         String contactNumber = input.getString("Please enter contact phone number: ");
         contactList.add(contactName);
+
         String number = "";
-        if(contactNumber.length() == 7){
+        if (contactNumber.length() == 7) {
             number = contactNumber.replaceFirst("(\\d{3})(\\d+)", "$1-$2");
-        }else if(contactNumber.length() == 10){
+        } else if (contactNumber.length() == 10) {
             number = contactNumber.replaceFirst("(\\d{3})(\\d{3})(\\d+)", "$1-$2-$3");
-        }else{
+        } else {
             number = contactNumber;
         }
-            contactList.add(number);
+        contactList.add(number);
+        String contactEmail = input.getString("Please enter contact email address: ");
+        contactList.add(contactEmail);
         Files.write(contactsPath, contactList);
         menu();
     }
@@ -114,16 +130,25 @@ public class contact {
         List<String> contacts = Files.readAllLines(contactsPath);
         String hold1 = "";
         String hold2 = "";
+        String hold3 = "";
         int count = 0;
         for (String contact : contacts) {
             if (contact.toLowerCase().contains(userInput)) {
+                if(count > contacts.size()){
+                    count = contacts.size();
+                }
                 hold1 = contact;
                 hold2 = contacts.get(count + 1);
-                System.out.println(hold1 + " | " + hold2);
+                hold3 = contacts.get(count + 2);
+                System.out.println(hold2);
+                System.out.println(hold1 + " | " + hold2 + " | " + hold3);
             }
             count++;
 
         }
+        System.out.println();
+        System.out.println("Press enter to continue");
+        input.waitForEnter();
         menu();
     }
 
@@ -131,14 +156,15 @@ public class contact {
         Path contactsPath = Paths.get(directory, filename);
         List<String> contacts = Files.readAllLines(contactsPath);
         showContacts(false);
-        int userInput = input.getInt(1, (contacts.size() / 2), "Enter the Index number of the contact you want to delete: ");
-        if (userInput == 1){
-            contacts.remove(userInput-1);
-            contacts.remove(userInput-1);
-        }
-        else{
-            contacts.remove(userInput+(userInput-2));
-            contacts.remove(userInput+(userInput-2));
+        int userInput = input.getInt(1, (contacts.size() / 3), "Enter the Index number of the contact you want to delete: ");
+        if (userInput == 1) {
+            contacts.remove(userInput - 1);
+            contacts.remove(userInput - 1);
+            contacts.remove(userInput - 1);
+        } else {
+            contacts.remove(userInput + (-3 + (2 * userInput)));
+            contacts.remove(userInput + (-3 + (2 * userInput)));
+            contacts.remove(userInput + (-3 + (2 * userInput)));
         }
         Files.write(contactsPath, contacts);
         menu();
