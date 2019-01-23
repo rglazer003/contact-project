@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -12,10 +13,17 @@ public class contact {
     static Input input = new Input();
     static String directory = "src/data";
     static String filename = "contacts.txt";
+    static String testFilename = "testContacts.txt";
 
-    public static void main(String[] args) {
-        menu();
+
+
+    public static void main(String[] args) throws IOException {
+//        menu();
+//        addContactsTest();
+        showContactsTest();
     }
+
+
 
     public static void showContacts() throws IOException {
         Path contactsPath = Paths.get(directory, filename);
@@ -26,6 +34,31 @@ public class contact {
         System.out.println("Press enter to go back to menu.");
         input.waitForEnter();
         menu();
+    }
+
+    public static void showContactsTest() throws IOException {
+        Path contactsPath = Paths.get(directory,testFilename);
+        List<String> contacts = Files.readAllLines(contactsPath);
+        String hold1 = "";
+        String hold2 = "";
+        int track = 0;
+        int count = 0;
+        for (String contact : contacts){
+            if (track%2==1){
+                hold2 = contact;
+                count++;
+            }
+            else {
+                hold1 = contact;
+                count++;
+            }
+            if (count == 2){
+                System.out.println(hold1+ " | "+hold2);
+                count=0;
+            }
+            track++;
+
+        }
     }
 
     public static void addContacts() throws IOException {
@@ -40,6 +73,23 @@ public class contact {
 
         contactList.add(contact);
 
+        Files.write(contactsPath, contactList);
+    }
+
+    public static void addContactsTest() throws IOException {
+
+        Path contactsPath = Paths.get(directory, testFilename);
+        if (Files.notExists(contactsPath)) {
+            Files.createFile(contactsPath);
+        }
+
+//        List<HashMap> contactList = Files.readAllLines(Paths.get(directory, filename));
+        List<String> contactList = Files.readAllLines(Paths.get(directory, filename));
+        String contactName = input.getString("Please enter new contact name: ");
+        String contactNumber = input.getString("Please enter contact phone number: ");
+
+        contactList.add(contactName);
+        contactList.add(contactNumber);
         Files.write(contactsPath, contactList);
     }
 
