@@ -16,19 +16,11 @@ public class contact {
     static Input input = new Input();
     static String directory = "src/data";
     static String filename = "contacts.txt";
+    static String testfilename = "testContacts.txt";
    static List<contact> contactList;
-
-    static {
-        try {
-            contactList = makeContactList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public static void main(String[] args) {
-
         menu();
     }
 
@@ -108,15 +100,8 @@ public class contact {
     public static void searchContacts(List<contact> contactList) throws IOException {
         String userInput = input.getString("Enter a name to view the phone number for a particular contact:");
         userInput = userInput.toLowerCase();
-        Path contactsPath = Paths.get(directory, filename);
-//        List<String> contacts = Files.readAllLines(contactsPath);
-//        String hold1 = "";
-//        String hold2 = "";
-//        String hold3 = "";
-//        int count = 0;
         for (final contact entry : contactList) {
                 if (entry.name.toLowerCase().contains(userInput)) {
-
                     System.out.println(entry.name + " | " + entry.number + " | " + entry.email);
                 }
             }
@@ -129,21 +114,20 @@ public class contact {
 
     public static void deleteContact(List<contact> contactList) throws IOException {
         Path contactsPath = Paths.get(directory, filename);
-        List<String> contacts = Files.readAllLines(contactsPath);
+        List<String> contacts = new ArrayList<>();
         showContacts(false, contactList);
-        int userInput = input.getInt(1, (contacts.size() / 3), "Enter the Index number of the contact you want to delete: ");
-        if (userInput == 1) {
-            contacts.remove(userInput - 1);
-            contacts.remove(userInput - 1);
-            contacts.remove(userInput - 1);
-        } else {
-            contacts.remove(userInput + (-3 + (2 * userInput)));
-            contacts.remove(userInput + (-3 + (2 * userInput)));
-            contacts.remove(userInput + (-3 + (2 * userInput)));
+        int userInput = input.getInt(1, contactList.size(), "Enter the Index number of the contact you want to delete: ");
+        contactList.remove(userInput-1);
+        for(final contact entry: contactList){
+            String hold1= entry.name;
+            String hold2= entry.number;
+            String hold3= entry.email;
+            contacts.add(hold1);
+            contacts.add(hold2);
+            contacts.add(hold3);
         }
         Files.write(contactsPath, contacts);
         menu();
-
     }
 
     public static List<contact> makeContactList () throws IOException {
@@ -173,7 +157,6 @@ public class contact {
                 count = 0;
                 track = 1;
             }
-
         }
         return contactList;
     }
@@ -216,8 +199,6 @@ public class contact {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         } else if (userChoice == 0) {
             System.out.println("Goodbye");
             System.exit(0);
