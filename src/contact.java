@@ -133,19 +133,15 @@ public class contact {
         String hold3 = "";
         int count = 0;
         for (String contact : contacts) {
-            if (contact.toLowerCase().contains(userInput)) {
-                if(count > contacts.size()){
-                    count = contacts.size();
+                if (contact.toLowerCase().contains(userInput)&&!contact.contains("@")) {
+                    hold1 = contact;
+                    hold2 = contacts.get(count + 1);
+                    hold3 = contacts.get(count + 2);
+                    System.out.println(hold1 + " | " + hold2 + " | " + hold3);
                 }
-                hold1 = contact;
-                hold2 = contacts.get(count + 1);
-                hold3 = contacts.get(count + 2);
-                System.out.println(hold2);
-                System.out.println(hold1 + " | " + hold2 + " | " + hold3);
+                count++;
             }
-            count++;
 
-        }
         System.out.println();
         System.out.println("Press enter to continue");
         input.waitForEnter();
