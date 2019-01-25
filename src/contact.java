@@ -60,8 +60,8 @@ public class contact {
         }
         System.out.println("Welcome! What would you like to do?");
 
-        System.out.println("1: Show all your contacts\n2: Add a new contact\n3: Search a contact by her name\n4: Delete an existing contact\n0: Exit");
-        int userChoice = Input.getInt(0, 4);
+        System.out.println("1: Show all your contacts\n2: Add a new contact\n3: Search a contact by their name\n4: Delete an existing contact\n5: Edit a contact\n0: Exit");
+        int userChoice = Input.getInt(0, 5);
 
         Input.waitForEnter();
 
@@ -89,7 +89,14 @@ public class contact {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (userChoice == 0) {
+        }else if (userChoice == 5){
+            try {
+                EditContact.editContacts(contactList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (userChoice == 0) {
             System.out.println("Goodbye");
             System.exit(0);
         }
